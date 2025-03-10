@@ -135,9 +135,6 @@ terraform plan
 terraform apply
 ```
 
-## Screenshots
-![Todo App Interface](https://example.com/screenshot.png)
-
 ## Future Enhancements
 - Task priority levels
 - Categories/tagging functionality
