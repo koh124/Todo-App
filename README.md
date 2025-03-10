@@ -36,8 +36,8 @@ This application adopts a modern architecture with separated frontend and backen
 ```mermaid
 flowchart TD
     User([User]) --> CF[CloudFront CDN]
-    CF <--> S3[S3 Bucket\nStatic Hosting]
-    CF -.-> Contentful[Contentful\nHeadless CMS]
+    CF <--> S3[S3 Bucket<br>Static Hosting]
+    CF -.-> Contentful[Contentful<br>Headless CMS]
 
     subgraph "Frontend Application"
     S3
