@@ -1,146 +1,149 @@
-# React ToDo App
+# Todo App
 
-A modern todo application built with React, TypeScript, Vite, and Contentful CMS.
+## Project Overview
+A modern Todo list application leveraging cloud-based technologies. This app offers basic task management functionality such as adding, removing, and marking tasks as complete, while persisting data in Contentful (a headless CMS) and hosting the application on AWS CloudFront/S3 for a complete cloud-native solution.
 
-## Demo
+Users can manage tasks through an intuitive interface, with filtering and pagination features for efficient handling of numerous tasks.
 
-Visit the live application: [https://d3kporeqgc8lhr.cloudfront.net](https://d3kporeqgc8lhr.cloudfront.net)
+## Key Features
+- Add, delete, and mark tasks as complete
+- Filter tasks (all, active, completed)
+- Pagination
+- Cloud data persistence
+- Responsive design
 
-## Features
+## Technology Stack
+### Frontend
+- React 18
+- TypeScript
+- CSS3
+- Vite (build tool)
 
-- Create, update, and delete tasks
-- Mark tasks as complete/incomplete
-- Filter tasks by status (all/active/completed)
-- Pagination for better organization
-- Responsive design for all devices
-- Optimistic UI updates for better user experience
-- Error handling with recovery mechanisms
-- Contentful CMS for content management
+### Backend & Data
+- Contentful (headless CMS)
+- Contentful Management API
+- Contentful Delivery API
 
-## Technologies
+### Infrastructure
+- AWS S3 (static file hosting)
+- AWS CloudFront (CDN)
+- Terraform (IaC)
+- GitHub Actions (CI/CD)
 
-- **Frontend**: React 19, TypeScript, CSS
-- **Build Tool**: Vite 6
-- **CMS**: Contentful Headless CMS
-- **Infrastructure**: AWS (S3, CloudFront), Terraform
-- **CI/CD**: Automated deployment workflows
+## Architecture
+This application adopts a modern architecture with separated frontend and backend concerns.
 
-## Getting Started
+```mermaid
+flowchart TD
+    User([User]) --> CF[CloudFront CDN]
+    CF <--> S3[S3 Bucket\nStatic Hosting]
+    CF -.-> Contentful[Contentful\nHeadless CMS]
+
+    subgraph "Frontend Application"
+    S3
+    end
+
+    subgraph "Data Layer"
+    Contentful
+    end
+
+    subgraph "CI/CD Pipeline"
+    GitHub[GitHub Repository] --> Actions[GitHub Actions]
+    Actions --> Build[Build Process]
+    Build --> S3
+    end
+
+    Admin([Admin]) --> ContentfulUI[Contentful Admin UI]
+    ContentfulUI --> Contentful
+
+    classDef aws fill:#FF9900,stroke:#232F3E,color:white;
+    classDef react fill:#61DAFB,stroke:#20232A,color:black;
+    classDef github fill:#24292E,stroke:#000000,color:white;
+    classDef contentful fill:#FAE501,stroke:#0C2340,color:black;
+
+    class S3,CF aws;
+    class GitHub,Actions github;
+    class Contentful,ContentfulUI contentful;
+```
+
+- **User Interface**: Single-page application built with React + TypeScript
+- **Data Storage**: Task data managed in Contentful CMS
+- **Hosting**: Static files stored in AWS S3
+- **Delivery**: Fast content delivery through AWS CloudFront
+- **Infrastructure Management**: Infrastructure as Code using Terraform
+- **Continuous Deployment**: Automated deployment pipeline using GitHub Actions
+
+## Setup Instructions
 
 ### Prerequisites
-
-- Node.js (v16+)
+- Node.js (v16 or higher)
 - npm or yarn
-- Contentful account [(https://www.contentful.com/)](https://www.contentful.com/)
+- AWS account
+- Contentful account
 
-
-### Environment Variables
-
-Create a `.env` file in the root directory with these variables:
-
-```
-VITE_CONTENTFUL_SPACE_ID=your_space_id
-VITE_CONTENTFUL_DELIVERY_TOKEN=your_delivery_token
-VITE_CONTENTFUL_MANAGEMENT_TOKEN=your_management_token
-```
-
-### Installation
-
+### Local Development Setup
 1. Clone the repository
-2. Install dependencies:
+   ```bash
+   git clone https://github.com/koh124/Todo-App.git
+   cd Todo-App
+   ```
+
+2. Install dependencies
    ```bash
    npm install
-   # or
-   yarn
    ```
-3. Start the development server:
+
+3. Set up environment variables
+   Copy `.env.example` to create a `.env` file and configure the necessary environment variables
+   ```bash
+   cp .env.example .env
+   # Edit the .env file to add your Contentful credentials
+   ```
+
+4. Start the development server
    ```bash
    npm run dev
-   # or
-   yarn dev
    ```
-4. Open `http://localhost:5173` in your browser
 
-## Contentful Setup
+### Deployment
+This project uses GitHub Actions to automatically deploy to AWS S3 and CloudFront when changes are pushed to the main branch.
 
-1. Create a Contentful space
-2. Create a content model named `todo` with the following fields:
-   - `title` (Text) - The task text
-   - `completed` (Boolean) - Task completion status
-   - `createdAt` (Date) - Task creation date
+For manual deployment:
+1. Build the application
+   ```bash
+   npm run build
+   ```
 
-## Build for Production
+2. Upload build artifacts to S3
+   ```bash
+   aws s3 sync dist/ s3://your-bucket-name --delete
+   ```
 
+3. Invalidate CloudFront cache
+   ```bash
+   aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
+   ```
+
+## Infrastructure Management
+The infrastructure is codified using Terraform.
+
+To run Terraform:
 ```bash
-npm run build
-# or
-yarn build
-```
-
-The built files will be in the `dist` directory.
-
-## Infrastructure
-
-The application is deployed using:
-- AWS CloudFront for content delivery
-- Contentful CMS for content management
-
-## Infrastructure as Code
-
-This project uses Terraform to provision and manage cloud infrastructure:
-
-### AWS Resources Managed by Terraform
-
-- S3 bucket for static website hosting
-- CloudFront distribution for content delivery
-- IAM policies for secure access control
-- Origin Access Control for S3 bucket security
-
-### Terraform Usage
-
-```bash
-# Initialize Terraform
 cd terraform
 terraform init
-
-# Plan deployment
 terraform plan
-
-# Apply changes
 terraform apply
-
-# Destroy infrastructure when no longer needed
-terraform destroy
 ```
 
-The Terraform configuration creates a secure hosting environment with:
-- Private S3 bucket with no public access
-- CloudFront distribution with HTTPS enforcement
-- SPA routing support via custom error responses
-- Optimized cache settings for performance
+## Screenshots
+![Todo App Interface](https://example.com/screenshot.png)
 
-## CI/CD Workflows
+## Future Enhancements
+- Task priority levels
+- Categories/tagging functionality
+- Dark mode support
+- Offline support and data synchronization
+- Performance optimizations
 
-The project includes automated workflows for continuous integration and delivery:
-
-### Development Workflow
-
-1. Develop locally with hot reloading
-2. Commit changes to feature branches
-3. Open pull requests for code review
-4. Automated testing runs on pull requests
-5. Merge approved changes to main branch
-
-### Deployment Workflow
-
-Deployments follow this automated process:
-
-1. Changes to main branch trigger the deployment workflow
-2. Build artifacts are created using Vite
-3. Artifacts are uploaded to the S3 bucket
-4. CloudFront cache is invalidated to reflect changes
-
-```bash
-# Manual deployment command
-npm run deploy
-```
+## License
+MIT
