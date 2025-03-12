@@ -17,7 +17,7 @@ Users can manage tasks through an intuitive interface, with filtering and pagina
 
 ## Technology Stack
 ### Frontend
-- React 18
+- React 19
 - TypeScript
 - CSS3
 - Vite (build tool)
